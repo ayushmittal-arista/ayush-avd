@@ -1,0 +1,19 @@
+# Copyright (c) 2023-2024 Arista Networks, Inc.
+# Use of this source code is governed by the Apache License 2.0
+# that can be found in the LICENSE file.
+# yaml-language-server: $schema=../../../_schema/avd_meta_schema.json
+# Line above is used by RedHat's YAML Schema vscode extension
+# Use Ctrl + Space to get suggestions for every field. Autocomplete will pop up after typing 2 letters.
+type: dict
+keys:
+  evpn_wan_dual_role:
+    documentation_options:
+      table: evpn-settings
+    description: |
+      If set,
+        - Use evpn_role for non-WAN.
+        - Use wan_role for WAN.
+      When wan_role and evpn_role are both set to client on a device it is assumed to be an
+      wan gateway.
+    type: bool
+    default: false

@@ -53,6 +53,7 @@ class RoutingMixin:
                     and (self.evpn_role in ["client", "server"] or self.mpls_overlay_role in ["client", "server"])
                 )
                 or self.bgp_in_network_services
+                or self.wan_role
             )
         ) or bool(self.l3_interfaces_bgp_neighbors)
 

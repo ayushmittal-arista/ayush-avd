@@ -31,6 +31,10 @@ class WanMixin:
 
         default_wan_role = self.node_type_key_data.default_wan_role
         wan_role = self.node_config.wan_role or default_wan_role
+
+        if self.inputs.evpn_wan_dual_role:
+            return wan_role
+
         if wan_role is not None and self.overlay_routing_protocol != "ibgp":
             msg = "Only 'ibgp' is supported as 'overlay_routing_protocol' for WAN nodes."
             raise AristaAvdError(msg)

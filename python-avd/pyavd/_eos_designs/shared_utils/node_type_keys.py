@@ -3,6 +3,7 @@
 # that can be found in the LICENSE file.
 from __future__ import annotations
 
+from copy import deepcopy
 from functools import cached_property
 from typing import TYPE_CHECKING
 
@@ -149,38 +150,74 @@ DEFAULT_NODE_TYPE_KEYS = {
             "default_evpn_role": "server",
             "cv_tags_topology_type": "spine",
         },
-        {
-            "key": "wan_router",
-            "type": "wan_router",
-            "default_evpn_role": "client",
-            "default_wan_role": "client",
-            "default_underlay_routing_protocol": "none",
-            "default_overlay_routing_protocol": "ibgp",
-            "default_flow_tracker_type": "hardware",
-            "vtep": True,
-            "network_services": {
-                "l3": True,
-            },
-        },
-        {
-            "key": "wan_rr",
-            "type": "wan_rr",
-            "default_evpn_role": "server",
-            "default_wan_role": "server",
-            "default_underlay_routing_protocol": "none",
-            "default_overlay_routing_protocol": "ibgp",
-            "default_flow_tracker_type": "hardware",
-            "vtep": True,
-            "network_services": {
-                "l3": True,
-            },
-        },
         # Avoiding duplicate code
         *MPLS_DEFAULT_NODE_TYPE_KEYS,
     ],
     "mpls": MPLS_DEFAULT_NODE_TYPE_KEYS,
     "l2ls": L2LS_DEFAULT_NODE_TYPE_KEYS,
 }
+
+default_wan_type_keys = [
+    {
+        "key": "wan_router",
+        "type": "wan_router",
+        "default_evpn_role": "client",
+        "default_wan_role": "client",
+        "default_underlay_routing_protocol": "none",
+        "default_overlay_routing_protocol": "ibgp",
+        "default_flow_tracker_type": "hardware",
+        "vtep": True,
+        "network_services": {
+            "l3": True,
+        },
+    },
+    {
+        "key": "wan_rr",
+        "type": "wan_rr",
+        "default_evpn_role": "server",
+        "default_wan_role": "server",
+        "default_underlay_routing_protocol": "none",
+        "default_overlay_routing_protocol": "ibgp",
+        "default_flow_tracker_type": "hardware",
+        "vtep": True,
+        "network_services": {
+            "l3": True,
+        },
+    },
+]
+
+dual_wan_evpn_keys = [
+    {
+        "key": "wan_router",
+        "type": "wan_router",
+        "default_underlay_routing_protocol": "none",
+        "default_overlay_routing_protocol": "none",
+        "default_evpn_role": "none",
+        "default_wan_role": "client",
+        "default_flow_tracker_type": "hardware",
+        "vtep": True,
+        "network_services": {
+            "l3": True,
+        },
+    },
+    {
+        "key": "wan_rr",
+        "type": "wan_rr",
+        "default_wan_role": "server",
+        "default_underlay_routing_protocol": "none",
+        "default_overlay_routing_protocol": "none",
+        "default_evpn_role": "none",
+        "default_flow_tracker_type": "hardware",
+        "vtep": True,
+        "network_services": {
+            "l3": True,
+        },
+    },
+]
+
+DUAL_WAN_EVPN_DEFAULT_NODE_TYPE_KEYS = deepcopy(DEFAULT_NODE_TYPE_KEYS)
+DEFAULT_NODE_TYPE_KEYS["l3ls-evpn"].extend(default_wan_type_keys)
+DUAL_WAN_EVPN_DEFAULT_NODE_TYPE_KEYS["l3ls-evpn"].extend(dual_wan_evpn_keys)
 
 
 class NodeTypeKeysMixin:
@@ -199,7 +236,9 @@ class NodeTypeKeysMixin:
                 return node_type_key._cast_as(EosDesigns.NodeTypeKeysItem)
 
         design_type = self.inputs.design.type
-        default_node_type_keys_for_our_design = EosDesigns.NodeTypeKeys._from_list(get(DEFAULT_NODE_TYPE_KEYS, design_type, default=[]))
+        keys_db = DUAL_WAN_EVPN_DEFAULT_NODE_TYPE_KEYS if self.inputs.evpn_wan_dual_role else DEFAULT_NODE_TYPE_KEYS
+        default_node_type_keys_for_our_design = EosDesigns.NodeTypeKeys._from_list(get(keys_db, design_type, default=[]))
+
         node_type_keys = self.inputs.node_type_keys or default_node_type_keys_for_our_design
         for node_type_key in node_type_keys:
             if node_type_key.type == self.type:

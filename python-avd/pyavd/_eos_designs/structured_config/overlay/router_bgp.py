@@ -52,9 +52,9 @@ class RouterBgpMixin(UtilsMixin):
         return strip_empties_from_dict(router_bgp, strip_values_tuple=(None, ""))
 
     def _bgp_cluster_id(self: AvdStructuredConfigOverlay) -> str | None:
-        if self.shared_utils.overlay_routing_protocol == "ibgp" and (
+        if (self.shared_utils.overlay_routing_protocol == "ibgp" and (
             self.shared_utils.evpn_role == "server" or self.shared_utils.mpls_overlay_role == "server"
-        ):
+        )) or self.shared_utils.is_wan_server:
             return default(self.shared_utils.node_config.bgp_cluster_id, self.shared_utils.router_id)
         return None
 

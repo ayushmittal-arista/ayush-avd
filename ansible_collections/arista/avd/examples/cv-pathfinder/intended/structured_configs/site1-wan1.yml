@@ -228,11 +228,6 @@ ip_access_lists:
     protocol: ip
     source: any
     destination: any
-ip_extcommunity_lists:
-- name: ECL-EVPN-SOO
-  entries:
-  - type: permit
-    extcommunities: soo 192.168.255.3:101
 ip_name_servers:
 - ip_address: 192.168.17.1
   vrf: MGMT
@@ -458,47 +453,6 @@ route_maps:
     - metric 50
   - sequence: 20
     type: permit
-- name: RM-EVPN-SOO-IN
-  sequence_numbers:
-  - sequence: 10
-    type: deny
-    match:
-    - extcommunity ECL-EVPN-SOO
-  - sequence: 20
-    type: permit
-- name: RM-EVPN-SOO-OUT
-  sequence_numbers:
-  - sequence: 10
-    type: permit
-    set:
-    - extcommunity soo 192.168.255.3:101 additive
-- name: RM-WAN-HA-PEER-IN
-  sequence_numbers:
-  - sequence: 10
-    type: permit
-    description: Set tag 50 on routes received from HA peer over EVPN
-    set:
-    - tag 50
-- name: RM-WAN-HA-PEER-OUT
-  sequence_numbers:
-  - sequence: 10
-    type: permit
-    description: Make EVPN routes learned from WAN less preferred on HA peer
-    match:
-    - route-type internal
-    set:
-    - local-preference 50
-  - sequence: 20
-    type: permit
-    description: Make locally injected routes less preferred on HA peer
-    set:
-    - local-preference 75
-- name: RM-EVPN-EXPORT-VRF-DEFAULT
-  sequence_numbers:
-  - sequence: 10
-    type: permit
-    match:
-    - extcommunity ECL-EVPN-SOO
 router_adaptive_virtual_topology:
   topology_role: transit region
   region:
@@ -600,19 +554,6 @@ router_bgp:
       times: 1
     route_map_in: RM-BGP-UNDERLAY-PEERS-IN
     route_map_out: RM-BGP-UNDERLAY-PEERS-OUT
-  - name: WAN-OVERLAY-PEERS
-    type: wan
-    remote_as: '65000'
-    update_source: Dps1
-    bfd: true
-    bfd_timers:
-      interval: 1000
-      min_rx: 1000
-      multiplier: 10
-    password: htm4AZe9mIQOO1uiMuGgYQ==
-    send_community: all
-    maximum_routes: 0
-    ttl_maximum_hops: 1
   neighbors:
   - ip_address: 10.0.1.8
     peer_group: IPv4-UNDERLAY-PEERS
@@ -624,27 +565,9 @@ router_bgp:
     remote_as: '65101'
     peer: site1-border2
     description: site1-border2_Ethernet3
-  - ip_address: 192.168.42.1
-    peer_group: WAN-OVERLAY-PEERS
-    peer: pf1
-    description: pf1_Dps1
-  - ip_address: 192.168.42.2
-    peer_group: WAN-OVERLAY-PEERS
-    peer: pf2
-    description: pf2_Dps1
-  - ip_address: 192.168.42.4
-    remote_as: '65000'
-    peer: site1-wan2
-    description: site1-wan2
-    route_reflector_client: true
-    update_source: Dps1
-    route_map_in: RM-WAN-HA-PEER-IN
-    route_map_out: RM-WAN-HA-PEER-OUT
-    send_community: all
   redistribute:
     connected:
       enabled: true
-      route_map: RM-CONN-2-BGP
   address_family_evpn:
     neighbor_default:
       next_hop_self_received_evpn_routes:
@@ -652,12 +575,6 @@ router_bgp:
     neighbors:
     - ip_address: 192.168.42.4
       activate: true
-      encapsulation: path-selection
-    peer_groups:
-    - name: WAN-OVERLAY-PEERS
-      activate: true
-      route_map_in: RM-EVPN-SOO-IN
-      route_map_out: RM-EVPN-SOO-OUT
       encapsulation: path-selection
   address_family_ipv4:
     peer_groups:
@@ -686,16 +603,6 @@ router_bgp:
       activate: true
   vrfs:
   - name: BLUE
-    rd: 192.168.255.3:100
-    route_targets:
-      import:
-      - address_family: evpn
-        route_targets:
-        - 100:100
-      export:
-      - address_family: evpn
-        route_targets:
-        - 100:100
     router_id: 192.168.255.3
     neighbors:
     - ip_address: 10.0.1.8
@@ -710,16 +617,6 @@ router_bgp:
       connected:
         enabled: true
   - name: RED
-    rd: 192.168.255.3:101
-    route_targets:
-      import:
-      - address_family: evpn
-        route_targets:
-        - 101:101
-      export:
-      - address_family: evpn
-        route_targets:
-        - 101:101
     router_id: 192.168.255.3
     neighbors:
     - ip_address: 10.0.1.8
@@ -733,18 +630,6 @@ router_bgp:
     redistribute:
       connected:
         enabled: true
-  - name: default
-    rd: 192.168.255.3:1
-    route_targets:
-      import:
-      - address_family: evpn
-        route_targets:
-        - '1:1'
-      export:
-      - address_family: evpn
-        route_targets:
-        - '1:1'
-        - route-map RM-EVPN-EXPORT-VRF-DEFAULT
 router_path_selection:
   path_groups:
   - name: MPLS
@@ -890,10 +775,3 @@ vxlan_interface:
     vxlan:
       source_interface: Dps1
       udp_port: 4789
-      vrfs:
-      - name: BLUE
-        vni: 100
-      - name: RED
-        vni: 101
-      - name: default
-        vni: 1
