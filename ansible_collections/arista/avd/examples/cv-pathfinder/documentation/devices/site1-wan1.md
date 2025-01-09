@@ -639,6 +639,8 @@ ip route vrf MGMT 0.0.0.0/0 192.168.17.1
 
 Topology role: transit region
 
+VXLAN gateway: Enabled
+
 | Hierarchy | Name | ID |
 | --------- | ---- | -- |
 | Region | REGION1 | 1 |
@@ -725,7 +727,7 @@ Topology role: transit region
 ```eos
 !
 router adaptive-virtual-topology
-   topology role transit region
+   topology role transit region gateway vxlan
    region REGION1 id 1
    zone REGION1-ZONE id 1
    site SITE1 id 101
@@ -831,6 +833,16 @@ ASN Notation: asplain
 
 #### Router BGP Peer Groups
 
+##### EVPN-OVERLAY-PEERS
+
+| Settings | Value |
+| -------- | ----- |
+| Address Family | evpn |
+| Source | Dps1 |
+| BFD | True |
+| Send community | all |
+| Maximum routes | 0 (no limit) |
+
 ##### IPv4-UNDERLAY-PEERS
 
 | Settings | Value |
@@ -873,6 +885,7 @@ ASN Notation: asplain
 
 | Peer Group | Activate | Route-map In | Route-map Out | Encapsulation |
 | ---------- | -------- | ------------ | ------------- | ------------- |
+| EVPN-OVERLAY-PEERS | True |  - | - | default |
 | WAN-OVERLAY-PEERS | True |  RM-EVPN-SOO-IN | RM-EVPN-SOO-OUT | path-selection |
 
 ##### EVPN Neighbors
@@ -885,7 +898,9 @@ ASN Notation: asplain
 
 | Settings | Value |
 | -------- | ----- |
+| Remote Domain Peer Groups | WAN-OVERLAY-PEERS |
 | L3 Gateway Configured | True |
+| L3 Gateway Inter-domain | True |
 
 #### Router BGP IPv4 SR-TE Address Family
 
@@ -933,6 +948,11 @@ router bgp 65000
    router-id 192.168.255.3
    no bgp default ipv4-unicast
    maximum-paths 16
+   neighbor EVPN-OVERLAY-PEERS peer group
+   neighbor EVPN-OVERLAY-PEERS update-source Dps1
+   neighbor EVPN-OVERLAY-PEERS bfd
+   neighbor EVPN-OVERLAY-PEERS send-community
+   neighbor EVPN-OVERLAY-PEERS maximum-routes 0
    neighbor IPv4-UNDERLAY-PEERS peer group
    neighbor IPv4-UNDERLAY-PEERS allowas-in 1
    neighbor IPv4-UNDERLAY-PEERS route-map RM-BGP-UNDERLAY-PEERS-IN in
@@ -968,15 +988,18 @@ router bgp 65000
    redistribute connected route-map RM-CONN-2-BGP
    !
    address-family evpn
+      neighbor EVPN-OVERLAY-PEERS activate
       neighbor WAN-OVERLAY-PEERS activate
       neighbor WAN-OVERLAY-PEERS route-map RM-EVPN-SOO-IN in
       neighbor WAN-OVERLAY-PEERS route-map RM-EVPN-SOO-OUT out
       neighbor WAN-OVERLAY-PEERS encapsulation path-selection
+      neighbor WAN-OVERLAY-PEERS domain remote
       neighbor 192.168.42.4 activate
       neighbor 192.168.42.4 encapsulation path-selection
-      neighbor default next-hop-self received-evpn-routes route-type ip-prefix
+      neighbor default next-hop-self received-evpn-routes route-type ip-prefix inter-domain
    !
    address-family ipv4
+      no neighbor EVPN-OVERLAY-PEERS activate
       neighbor IPv4-UNDERLAY-PEERS activate
       no neighbor WAN-OVERLAY-PEERS activate
    !

@@ -501,6 +501,7 @@ route_maps:
     - extcommunity ECL-EVPN-SOO
 router_adaptive_virtual_topology:
   topology_role: transit region
+  gateway_vxlan: true
   region:
     name: REGION1
     id: 1
@@ -613,6 +614,12 @@ router_bgp:
     send_community: all
     maximum_routes: 0
     ttl_maximum_hops: 1
+  - name: EVPN-OVERLAY-PEERS
+    type: evpn
+    update_source: Dps1
+    bfd: true
+    send_community: all
+    maximum_routes: 0
   neighbors:
   - ip_address: 10.0.1.8
     peer_group: IPv4-UNDERLAY-PEERS
@@ -649,21 +656,27 @@ router_bgp:
     neighbor_default:
       next_hop_self_received_evpn_routes:
         enable: true
+        inter_domain: true
     neighbors:
     - ip_address: 192.168.42.4
       activate: true
       encapsulation: path-selection
     peer_groups:
+    - name: EVPN-OVERLAY-PEERS
+      activate: true
     - name: WAN-OVERLAY-PEERS
       activate: true
       route_map_in: RM-EVPN-SOO-IN
       route_map_out: RM-EVPN-SOO-OUT
+      domain_remote: true
       encapsulation: path-selection
   address_family_ipv4:
     peer_groups:
     - name: IPv4-UNDERLAY-PEERS
       activate: true
     - name: WAN-OVERLAY-PEERS
+      activate: false
+    - name: EVPN-OVERLAY-PEERS
       activate: false
   address_family_ipv4_sr_te:
     peer_groups:

@@ -112,6 +112,18 @@ ethernet_interfaces:
   peer: site1-wan2
   peer_interface: Ethernet1.101
   peer_type: wan_router
+- name: Ethernet10
+  description: P2P_site1-border5_Ethernet10
+  shutdown: false
+  mtu: 9214
+  flow_tracker:
+    sampled: FLOW-TRACKER
+  ip_address: 10.0.20.98/31
+  peer: site1-border5
+  peer_interface: Ethernet10
+  peer_type: l3leaf
+  switchport:
+    enabled: false
 flow_tracking:
   sampled:
     sample: 10000
@@ -280,6 +292,11 @@ router_bgp:
     remote_as: '65000'
     peer: site1-wan2
     description: site1-wan2_Ethernet1
+  - ip_address: 10.0.20.99
+    peer_group: IPv4-UNDERLAY-PEERS
+    remote_as: '65101'
+    peer: site1-border5
+    description: site1-border5_Ethernet10
   redistribute:
     connected:
       enabled: true

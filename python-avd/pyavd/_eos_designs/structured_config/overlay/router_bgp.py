@@ -118,7 +118,6 @@ class RouterBgpMixin(UtilsMixin):
                         "ebgp_multihop": self.inputs.evpn_ebgp_gateway_multihop,
                     },
                 )
-
         elif self.shared_utils.overlay_routing_protocol == "ibgp":
             if self.shared_utils.overlay_mpls is True:
                 # MPLS OVERLAY peer group
@@ -144,6 +143,12 @@ class RouterBgpMixin(UtilsMixin):
                         {
                             **self._generate_base_peer_group("wan", "wan_overlay_peers", update_source=self.shared_utils.vtep_loopback),
                             **peer_group_config,
+                        },
+                    )
+                if self.shared_utils.evpn_wan_gateway:
+                    peer_groups.append(
+                        {
+                            **self._generate_base_peer_group("evpn", "evpn_overlay_peers", update_source=self.shared_utils.vtep_loopback),
                         },
                     )
                 else:
@@ -191,7 +196,8 @@ class RouterBgpMixin(UtilsMixin):
 
         if self.shared_utils.is_wan_router:
             peer_groups.append({"name": self.inputs.bgp_peer_groups.wan_overlay_peers.name, "activate": False})
-
+            if self.shared_utils.evpn_wan_gateway:
+                peer_groups.append({"name": self.inputs.bgp_peer_groups.evpn_overlay_peers.name, "activate": False})
         # TODO: no elif
         elif self.shared_utils.overlay_evpn_vxlan is True:
             peer_groups.append({"name": self.inputs.bgp_peer_groups.evpn_overlay_peers.name, "activate": False})
@@ -228,9 +234,10 @@ class RouterBgpMixin(UtilsMixin):
                     "name": self.inputs.bgp_peer_groups.wan_overlay_peers.name,
                     "activate": True,
                     "encapsulation": self.inputs.wan_encapsulation,
+                    "domain_remote": self.shared_utils.evpn_wan_gateway,
                 }
-            else:
-                overlay_peer_group = {"name": self.inputs.bgp_peer_groups.evpn_overlay_peers.name, "activate": True}
+            if not self.shared_utils.is_wan_router or self.shared_utils.evpn_wan_gateway:
+                peer_groups.append({"name": self.inputs.bgp_peer_groups.evpn_overlay_peers.name, "activate": True})
 
         if self.shared_utils.overlay_routing_protocol == "ebgp":
             if self.shared_utils.node_config.evpn_gateway.evpn_l2.enabled or self.shared_utils.node_config.evpn_gateway.evpn_l3.enabled:
@@ -318,6 +325,11 @@ class RouterBgpMixin(UtilsMixin):
                     "encapsulation": self.inputs.wan_encapsulation,
                 }
             ]
+
+        if self.shared_utils.evpn_wan_gateway:
+            address_family_evpn["neighbor_default"] = {
+                "next_hop_self_received_evpn_routes": {"enable": True, "inter_domain": True},
+            }
 
         return address_family_evpn or None
 

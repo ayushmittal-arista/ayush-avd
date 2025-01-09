@@ -54390,6 +54390,7 @@ class EosDesigns(EosDesignsRootModel):
         "evpn_short_esi_prefix": {"type": str, "default": "0000:0000:"},
         "evpn_vlan_aware_bundles": {"type": bool, "default": False},
         "evpn_vlan_bundles": {"type": EvpnVlanBundles},
+        "evpn_wan_dual_role": {"type": bool, "default": False},
         "fabric_evpn_encapsulation": {"type": str},
         "fabric_flow_tracking": {"type": FabricFlowTracking},
         "fabric_ip_addressing": {"type": FabricIpAddressing},
@@ -55296,6 +55297,17 @@ class EosDesigns(EosDesignsRootModel):
     """
     evpn_vlan_bundles: EvpnVlanBundles
     """Subclass of AvdIndexedList with `EvpnVlanBundlesItem` items. Primary key is `name` (`str`)."""
+    evpn_wan_dual_role: bool
+    """
+    If set,
+      - Use evpn_role for non-WAN.
+      - Use wan_role for WAN.
+    When wan_role and evpn_role are
+    both set to client on a device it is assumed to be an
+    wan gateway.
+
+    Default value: `False`
+    """
     fabric_evpn_encapsulation: Literal["vxlan", "mpls"] | None
     """
     Should be set to mpls for evpn-mpls scenario. This overrides the evpn_encapsulation setting under
@@ -56477,6 +56489,7 @@ class EosDesigns(EosDesignsRootModel):
             evpn_short_esi_prefix: str | UndefinedType = Undefined,
             evpn_vlan_aware_bundles: bool | UndefinedType = Undefined,
             evpn_vlan_bundles: EvpnVlanBundles | UndefinedType = Undefined,
+            evpn_wan_dual_role: bool | UndefinedType = Undefined,
             fabric_evpn_encapsulation: Literal["vxlan", "mpls"] | None | UndefinedType = Undefined,
             fabric_flow_tracking: FabricFlowTracking | UndefinedType = Undefined,
             fabric_ip_addressing: FabricIpAddressing | UndefinedType = Undefined,
@@ -57074,6 +57087,13 @@ class EosDesigns(EosDesignsRootModel):
                    `l2vlans` takes precedence and overrides this behavior. Per svi/l2vlan `evpn_vlan_bundle` also works
                    when this setting is disabled which allow mixing vlan-aware-bundles with regular MAC-VRFs.
                 evpn_vlan_bundles: Subclass of AvdIndexedList with `EvpnVlanBundlesItem` items. Primary key is `name` (`str`).
+                evpn_wan_dual_role:
+                   If set,
+                     - Use evpn_role for non-WAN.
+                     - Use wan_role for WAN.
+                   When wan_role and evpn_role are
+                   both set to client on a device it is assumed to be an
+                   wan gateway.
                 fabric_evpn_encapsulation:
                    Should be set to mpls for evpn-mpls scenario. This overrides the evpn_encapsulation setting under
                    node_type_keys.

@@ -1390,6 +1390,14 @@ keys:
               description: 'EOS cli commands rendered on router_bgp.vlans-aware-bundle.
 
                 '
+  evpn_wan_dual_role:
+    documentation_options:
+      table: evpn-settings
+    description: "If set,\n  - Use evpn_role for non-WAN.\n  - Use wan_role for WAN.\nWhen
+      wan_role and evpn_role are both set to client on a device it is assumed to be
+      an\nwan gateway.\n"
+    type: bool
+    default: false
   fabric_evpn_encapsulation:
     documentation_options:
       table: evpn-settings

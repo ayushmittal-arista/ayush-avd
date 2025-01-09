@@ -587,6 +587,7 @@ router_bgp:
       activate: true
       route_map_in: RM-EVPN-SOO-IN
       route_map_out: RM-EVPN-SOO-OUT
+      domain_remote: false
       encapsulation: path-selection
   address_family_ipv4:
     peer_groups:

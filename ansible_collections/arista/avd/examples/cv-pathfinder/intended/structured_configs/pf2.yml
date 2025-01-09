@@ -576,6 +576,7 @@ router_bgp:
       encapsulation: path-selection
     - name: WAN-OVERLAY-PEERS
       activate: true
+      domain_remote: false
       encapsulation: path-selection
     next_hop:
       resolution_disabled: true

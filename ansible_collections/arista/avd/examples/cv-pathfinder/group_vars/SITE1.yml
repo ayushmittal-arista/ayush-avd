@@ -22,6 +22,17 @@ l3leaf:
         - name: site1-border2
           mgmt_ip: 192.168.17.15/24
           id: 6
+    - group: SITE2
+      uplink_ipv4_pool: 10.0.20.0/24
+      uplink_interfaces: [Ethernet10]
+      uplink_switches: [site1-border1]
+      bgp_as: 65101
+      nodes:
+        - name: site1-border5
+          mgmt_ip: 192.168.17.140/24
+          uplink_switch_interfaces: [Ethernet10]
+          id: 50
+
 
 wan_router:
   defaults:

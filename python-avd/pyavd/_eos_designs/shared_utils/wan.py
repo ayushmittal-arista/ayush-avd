@@ -592,3 +592,8 @@ class WanMixin:
             return None
 
         return self.inputs.wan_stun_dtls_profile_name
+
+    @cached_property
+    def evpn_wan_gateway(self: SharedUtils) -> str | None:
+        """Return whether device is running in wan gateway mode."""
+        return self.wan_role == "client" and self.evpn_role == "client" and self.inputs.evpn_wan_dual_role
