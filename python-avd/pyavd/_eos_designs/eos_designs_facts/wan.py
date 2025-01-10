@@ -18,6 +18,12 @@ class WanMixin:
     Using type-hint on self to get proper type-hints on attributes across all Mixins.
     """
 
+
+    @cached_property
+    def evpn_wan_gateway(self: EosDesignsFacts) -> str | None:
+        """Exposed in avd_switch_facts."""
+        return self.shared_utils.evpn_wan_gateway
+
     @cached_property
     def wan_path_groups(self: EosDesignsFacts) -> list | None:
         """

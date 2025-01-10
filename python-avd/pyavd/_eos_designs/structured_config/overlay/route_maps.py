@@ -51,9 +51,9 @@ class RouteMapsMixin(UtilsMixin):
                         },
                     )
 
-        elif (
-            (self.shared_utils.overlay_routing_protocol == "ibgp" and self.shared_utils.overlay_vtep) or self.shared_utils.is_wan_router
-        ) and self.shared_utils.evpn_role != "server":
+        if (self.shared_utils.overlay_routing_protocol == "ibgp" and self.shared_utils.overlay_vtep and self.shared_utils.evpn_role != "server") or (
+            self.shared_utils.is_wan_client and self.inputs.wan_use_evpn_node_settings_for_lan
+        ):
             # Route-map IN and OUT for SOO
             route_maps.append(
                 {

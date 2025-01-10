@@ -573,6 +573,7 @@ router_bgp:
     peer_groups:
     - name: WAN-OVERLAY-PEERS
       activate: true
+      domain_remote: false
       encapsulation: path-selection
     - name: WAN-RR-OVERLAY-PEERS
       activate: true

@@ -71,16 +71,18 @@ class UtilsMixin:
         if not self.shared_utils.overlay_evpn:
             return {}
 
-        if self.shared_utils.evpn_role != "server":
-            return {}
+        # if self.shared_utils.evpn_role != "server":
+        #     return {}
 
         evpn_route_clients = {}
 
         for avd_peer in self._avd_overlay_peers:
             peer_facts = self.shared_utils.get_peer_facts(avd_peer, required=True)
             if (
+                peer_facts.get("evpn_wan_gateway") or
+                (self.shared_utils.evpn_role == "server" and
                 self.shared_utils.hostname in peer_facts.get("evpn_route_servers", [])
-                and peer_facts.get("evpn_role") in ["server", "client"]
+                and peer_facts.get("evpn_role") in ["server", "client"])
                 and avd_peer not in self._evpn_route_servers
             ):
                 self._append_peer(evpn_route_clients, avd_peer, peer_facts)
@@ -96,12 +98,33 @@ class UtilsMixin:
 
         for route_server in natural_sort(get(self._hostvars, "switch.evpn_route_servers", default=[])):
             peer_facts = self.shared_utils.get_peer_facts(route_server, required=True)
-            if peer_facts.get("evpn_role") != "server":
+            if not self.shared_utils.evpn_wan_gateway and peer_facts.get("evpn_role") != "server":
                 continue
 
             self._append_peer(evpn_route_servers, route_server, peer_facts)
 
         return evpn_route_servers
+
+    @cached_property
+    def _evpn_wan_gateway_lan_peers(self: AvdStructuredConfigOverlay) -> dict:
+        if not self.shared_utils.overlay_evpn:
+            return {}
+
+        for avd_peer in self._avd_overlay_peers:
+            peer_facts = self.shared_utils.get_peer_facts(avd_peer, required=True)
+            if (
+                self.shared_utils.hostname in peer_facts.get("evpn_route_servers", [])
+                and peer_facts.get("evpn_role") in ["server", "client"]
+                and avd_peer not in self._evpn_route_servers
+            ):
+                self._append_peer(evpn_route_clients, avd_peer, peer_facts)
+
+        return evpn_route_clients
+
+        if self.shared_utils.evpn_wan_gateway:
+            return {}
+        else:
+            return {}
 
     # The next four should probably be moved to facts
     @cached_property

@@ -501,6 +501,7 @@ route_maps:
     - extcommunity ECL-EVPN-SOO
 router_adaptive_virtual_topology:
   topology_role: transit region
+  gateway_vxlan: true
   region:
     name: REGION1
     id: 1
@@ -600,6 +601,13 @@ router_bgp:
       times: 1
     route_map_in: RM-BGP-UNDERLAY-PEERS-IN
     route_map_out: RM-BGP-UNDERLAY-PEERS-OUT
+  - name: EVPN-OVERLAY-PEERS
+    type: evpn
+    update_source: Loopback0
+    bfd: true
+    ebgp_multihop: 3
+    send_community: all
+    maximum_routes: 0
   - name: WAN-OVERLAY-PEERS
     type: wan
     remote_as: '65000'
@@ -624,12 +632,24 @@ router_bgp:
     remote_as: '65101'
     peer: site1-border2
     description: site1-border2_Ethernet3
+  - ip_address: 192.168.255.5
+    peer_group: EVPN-OVERLAY-PEERS
+    remote_as: '65101'
+    peer: site1-border1
+    description: site1-border1_Loopback0
+  - ip_address: 192.168.255.6
+    peer_group: EVPN-OVERLAY-PEERS
+    remote_as: '65101'
+    peer: site1-border2
+    description: site1-border2_Loopback0
   - ip_address: 192.168.42.1
     peer_group: WAN-OVERLAY-PEERS
+    remote_as: '65000'
     peer: pf1
     description: pf1_Dps1
   - ip_address: 192.168.42.2
     peer_group: WAN-OVERLAY-PEERS
+    remote_as: '65000'
     peer: pf2
     description: pf2_Dps1
   - ip_address: 192.168.42.4
@@ -649,6 +669,7 @@ router_bgp:
     neighbor_default:
       next_hop_self_received_evpn_routes:
         enable: true
+        inter_domain: true
     neighbors:
     - ip_address: 192.168.42.4
       activate: true
@@ -658,12 +679,17 @@ router_bgp:
       activate: true
       route_map_in: RM-EVPN-SOO-IN
       route_map_out: RM-EVPN-SOO-OUT
+      domain_remote: true
       encapsulation: path-selection
+    - name: EVPN-OVERLAY-PEERS
+      activate: true
   address_family_ipv4:
     peer_groups:
     - name: IPv4-UNDERLAY-PEERS
       activate: true
     - name: WAN-OVERLAY-PEERS
+      activate: false
+    - name: EVPN-OVERLAY-PEERS
       activate: false
   address_family_ipv4_sr_te:
     peer_groups:
