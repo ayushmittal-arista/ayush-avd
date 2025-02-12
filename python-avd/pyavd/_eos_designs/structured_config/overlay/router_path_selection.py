@@ -139,7 +139,7 @@ class RouterPathSelectionMixin(Protocol):
             interfaces = path_group.get("local_interfaces", [])
             for interface in interfaces:
                 name = interface["name"]
-                if (l3_intf := wan_interfaces.get(name)):
+                if l3_intf := wan_interfaces.get(name):
                     bandwidths = {}
                     if l3_intf.receive_bandwidth is not None:
                         bandwidths["receive"] = l3_intf.receive_bandwidth
