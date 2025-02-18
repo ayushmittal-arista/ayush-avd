@@ -6058,9 +6058,17 @@ class EosDesigns(EosDesignsRootModel):
         <interface_speed>`.
         """
         receive_bandwidth: int | None
-        """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+        """
+        Maximum allowed receive bandwidth (download) in Mbps for this interface.
+        This is currently used on
+        CVaaS to provide more information in the visualization.
+        """
         transmit_bandwidth: int | None
-        """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+        """
+        Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+        This is currently used on
+        CVaaS to provide more information in the visualization.
+        """
         peer: str | None
         """The peer device name. Used for description and documentation."""
         peer_interface: str | None
@@ -6218,8 +6226,14 @@ class EosDesigns(EosDesignsRootModel):
                     speed:
                        Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                        <interface_speed>`.
-                    receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                    transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                    receive_bandwidth:
+                       Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                       This is currently used on
+                       CVaaS to provide more information in the visualization.
+                    transmit_bandwidth:
+                       Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                       This is currently used on
+                       CVaaS to provide more information in the visualization.
                     peer: The peer device name. Used for description and documentation.
                     peer_interface: The peer device interface. Used for description and documentation.
                     peer_ip:
@@ -19301,9 +19315,17 @@ class EosDesigns(EosDesignsRootModel):
                         <interface_speed>`.
                         """
                         receive_bandwidth: int | None
-                        """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+                        """
+                        Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         transmit_bandwidth: int | None
-                        """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+                        """
+                        Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         peer: str | None
                         """The peer device name. Used for description and documentation."""
                         peer_interface: str | None
@@ -19459,8 +19481,14 @@ class EosDesigns(EosDesignsRootModel):
                                     speed:
                                        Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                                        <interface_speed>`.
-                                    receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                                    transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                    receive_bandwidth:
+                                       Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
+                                    transmit_bandwidth:
+                                       Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
                                     peer: The peer device name. Used for description and documentation.
                                     peer_interface: The peer device interface. Used for description and documentation.
                                     peer_ip:
@@ -23142,9 +23170,17 @@ class EosDesigns(EosDesignsRootModel):
                             <interface_speed>`.
                             """
                             receive_bandwidth: int | None
-                            """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+                            """
+                            Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                            This is currently used on
+                            CVaaS to provide more information in the visualization.
+                            """
                             transmit_bandwidth: int | None
-                            """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+                            """
+                            Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                            This is currently used on
+                            CVaaS to provide more information in the visualization.
+                            """
                             peer: str | None
                             """The peer device name. Used for description and documentation."""
                             peer_interface: str | None
@@ -23300,8 +23336,14 @@ class EosDesigns(EosDesignsRootModel):
                                         speed:
                                            Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                                            <interface_speed>`.
-                                        receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                                        transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                        receive_bandwidth:
+                                           Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                                           This is currently used on
+                                           CVaaS to provide more information in the visualization.
+                                        transmit_bandwidth:
+                                           Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                           This is currently used on
+                                           CVaaS to provide more information in the visualization.
                                         peer: The peer device name. Used for description and documentation.
                                         peer_interface: The peer device interface. Used for description and documentation.
                                         peer_ip:
@@ -26941,9 +26983,17 @@ class EosDesigns(EosDesignsRootModel):
                         <interface_speed>`.
                         """
                         receive_bandwidth: int | None
-                        """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+                        """
+                        Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         transmit_bandwidth: int | None
-                        """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+                        """
+                        Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         peer: str | None
                         """The peer device name. Used for description and documentation."""
                         peer_interface: str | None
@@ -27099,8 +27149,14 @@ class EosDesigns(EosDesignsRootModel):
                                     speed:
                                        Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                                        <interface_speed>`.
-                                    receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                                    transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                    receive_bandwidth:
+                                       Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
+                                    transmit_bandwidth:
+                                       Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
                                     peer: The peer device name. Used for description and documentation.
                                     peer_interface: The peer device interface. Used for description and documentation.
                                     peer_ip:
@@ -30798,9 +30854,17 @@ class EosDesigns(EosDesignsRootModel):
                         <interface_speed>`.
                         """
                         receive_bandwidth: int | None
-                        """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+                        """
+                        Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         transmit_bandwidth: int | None
-                        """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+                        """
+                        Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         peer: str | None
                         """The peer device name. Used for description and documentation."""
                         peer_interface: str | None
@@ -30956,8 +31020,14 @@ class EosDesigns(EosDesignsRootModel):
                                     speed:
                                        Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                                        <interface_speed>`.
-                                    receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                                    transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                    receive_bandwidth:
+                                       Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
+                                    transmit_bandwidth:
+                                       Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
                                     peer: The peer device name. Used for description and documentation.
                                     peer_interface: The peer device interface. Used for description and documentation.
                                     peer_ip:
@@ -40944,9 +41014,17 @@ class EosDesigns(EosDesignsRootModel):
                         <interface_speed>`.
                         """
                         receive_bandwidth: int | None
-                        """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+                        """
+                        Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         transmit_bandwidth: int | None
-                        """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+                        """
+                        Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         peer: str | None
                         """The peer device name. Used for description and documentation."""
                         peer_interface: str | None
@@ -41102,8 +41180,14 @@ class EosDesigns(EosDesignsRootModel):
                                     speed:
                                        Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                                        <interface_speed>`.
-                                    receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                                    transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                    receive_bandwidth:
+                                       Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
+                                    transmit_bandwidth:
+                                       Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
                                     peer: The peer device name. Used for description and documentation.
                                     peer_interface: The peer device interface. Used for description and documentation.
                                     peer_ip:
@@ -44785,9 +44869,17 @@ class EosDesigns(EosDesignsRootModel):
                             <interface_speed>`.
                             """
                             receive_bandwidth: int | None
-                            """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+                            """
+                            Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                            This is currently used on
+                            CVaaS to provide more information in the visualization.
+                            """
                             transmit_bandwidth: int | None
-                            """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+                            """
+                            Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                            This is currently used on
+                            CVaaS to provide more information in the visualization.
+                            """
                             peer: str | None
                             """The peer device name. Used for description and documentation."""
                             peer_interface: str | None
@@ -44943,8 +45035,14 @@ class EosDesigns(EosDesignsRootModel):
                                         speed:
                                            Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                                            <interface_speed>`.
-                                        receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                                        transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                        receive_bandwidth:
+                                           Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                                           This is currently used on
+                                           CVaaS to provide more information in the visualization.
+                                        transmit_bandwidth:
+                                           Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                           This is currently used on
+                                           CVaaS to provide more information in the visualization.
                                         peer: The peer device name. Used for description and documentation.
                                         peer_interface: The peer device interface. Used for description and documentation.
                                         peer_ip:
@@ -48584,9 +48682,17 @@ class EosDesigns(EosDesignsRootModel):
                         <interface_speed>`.
                         """
                         receive_bandwidth: int | None
-                        """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+                        """
+                        Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         transmit_bandwidth: int | None
-                        """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+                        """
+                        Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         peer: str | None
                         """The peer device name. Used for description and documentation."""
                         peer_interface: str | None
@@ -48742,8 +48848,14 @@ class EosDesigns(EosDesignsRootModel):
                                     speed:
                                        Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                                        <interface_speed>`.
-                                    receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                                    transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                    receive_bandwidth:
+                                       Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
+                                    transmit_bandwidth:
+                                       Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
                                     peer: The peer device name. Used for description and documentation.
                                     peer_interface: The peer device interface. Used for description and documentation.
                                     peer_ip:
@@ -52441,9 +52553,17 @@ class EosDesigns(EosDesignsRootModel):
                         <interface_speed>`.
                         """
                         receive_bandwidth: int | None
-                        """Maximum allowed receive bandwidth (download) in Mbps for this interface."""
+                        """
+                        Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         transmit_bandwidth: int | None
-                        """Maximum allowed transmit bandwidth (upload) in Mbps for this interface."""
+                        """
+                        Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                        This is currently used on
+                        CVaaS to provide more information in the visualization.
+                        """
                         peer: str | None
                         """The peer device name. Used for description and documentation."""
                         peer_interface: str | None
@@ -52599,8 +52719,14 @@ class EosDesigns(EosDesignsRootModel):
                                     speed:
                                        Speed should be set in the format `<interface_speed>` or `forced <interface_speed>` or `auto
                                        <interface_speed>`.
-                                    receive_bandwidth: Maximum allowed receive bandwidth (download) in Mbps for this interface.
-                                    transmit_bandwidth: Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                    receive_bandwidth:
+                                       Maximum allowed receive bandwidth (download) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
+                                    transmit_bandwidth:
+                                       Maximum allowed transmit bandwidth (upload) in Mbps for this interface.
+                                       This is currently used on
+                                       CVaaS to provide more information in the visualization.
                                     peer: The peer device name. Used for description and documentation.
                                     peer_interface: The peer device interface. Used for description and documentation.
                                     peer_ip:

@@ -131,7 +131,7 @@ class RouterPathSelectionMixin(Protocol):
 
         return ha_path_group
 
-    def _get_interface_bandwidths(self: AvdStructuredConfigOverlayProtocol, path_groups: dict) -> dict:
+    def _get_interface_bandwidths(self: AvdStructuredConfigOverlayProtocol, path_groups: dict) -> list:
         """Generate the bandwidths for the interfaces configured in path groups."""
         wan_interfaces = self.shared_utils.wan_interfaces
         metric_interfaces = []
