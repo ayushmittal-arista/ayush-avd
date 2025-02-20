@@ -1,4 +1,4 @@
-# inet-cloud
+# site1-spine1
 
 ## Table of Contents
 
@@ -12,12 +12,9 @@
   - [Local Users](#local-users)
   - [Enable Password](#enable-password)
   - [AAA Authorization](#aaa-authorization)
-- [DHCP Server](#dhcp-server)
-  - [DHCP Servers Summary](#dhcp-servers-summary)
-  - [DHCP Server Configuration](#dhcp-server-configuration)
-  - [DHCP Server Interfaces](#dhcp-server-interfaces)
 - [Monitoring](#monitoring)
   - [TerminAttr Daemon](#terminattr-daemon)
+  - [Flow Tracking](#flow-tracking)
 - [Spanning Tree](#spanning-tree)
   - [Spanning Tree Summary](#spanning-tree-summary)
   - [Spanning Tree Device Configuration](#spanning-tree-device-configuration)
@@ -26,7 +23,6 @@
   - [Internal VLAN Allocation Policy Device Configuration](#internal-vlan-allocation-policy-device-configuration)
 - [Interfaces](#interfaces)
   - [Ethernet Interfaces](#ethernet-interfaces)
-  - [Port-Channel Interfaces](#port-channel-interfaces)
   - [Loopback Interfaces](#loopback-interfaces)
 - [Routing](#routing)
   - [Service Routing Protocols Model](#service-routing-protocols-model)
@@ -34,6 +30,11 @@
   - [IPv6 Routing](#ipv6-routing)
   - [Static Routes](#static-routes)
   - [Router BGP](#router-bgp)
+- [BFD](#bfd)
+  - [Router BFD](#router-bfd)
+- [Filters](#filters)
+  - [Prefix-lists](#prefix-lists)
+  - [Route-maps](#route-maps)
 - [VRF Instances](#vrf-instances)
   - [VRF Instances Summary](#vrf-instances-summary)
   - [VRF Instances Device Configuration](#vrf-instances-device-configuration)
@@ -48,7 +49,7 @@
 
 | Management Interface | Description | Type | VRF | IP Address | Gateway |
 | -------------------- | ----------- | ---- | --- | ---------- | ------- |
-| Management1 | OOB_MANAGEMENT | oob | MGMT | 192.168.17.31/24 | 192.168.17.1 |
+| Management1 | OOB_MANAGEMENT | oob | MGMT | 192.168.17.101/24 | 192.168.17.1 |
 
 ##### IPv6
 
@@ -64,7 +65,7 @@ interface Management1
    description OOB_MANAGEMENT
    no shutdown
    vrf MGMT
-   ip address 192.168.17.31/24
+   ip address 192.168.17.101/24
    no lldp transmit
    no lldp receive
 ```
@@ -186,58 +187,6 @@ aaa authorization exec default local
 !
 ```
 
-## DHCP Server
-
-### DHCP Servers Summary
-
-| DHCP Server Enabled | VRF | IPv4 DNS Domain | IPv4 DNS Servers | IPv4 Bootfile | IPv4 Lease Time | IPv6 DNS Domain | IPv6 DNS Servers | IPv6 Bootfile | IPv6 Lease Time |
-| ------------------- | --- | --------------- | ---------------- | ------------- | --------------- | --------------- | ---------------- | ------------- | --------------- |
-| True | default | - | - | - | 6 days 23 hours 59 minutes | - | - | - | - |
-
-#### VRF default DHCP Server
-
-##### Subnets
-
-| Subnet | Name | DNS Servers | Default Gateway | Lease Time | Ranges |
-| ------ | ---- | ----------- | --------------- | ---------- | ------ |
-| 100.64.10.0/24 | 10 NET | - | 100.64.10.1 | - | 100.64.10.2-100.64.10.2 |
-| 100.64.11.0/24 | 11 NET | - | 100.64.11.1 | - | 100.64.11.2-100.64.11.2 |
-| 100.64.30.0/24 | 30 NET | - | 100.64.30.1 | - | 100.64.30.2-100.64.30.2 |
-
-### DHCP Server Configuration
-
-```eos
-!
-dhcp server
-   lease time ipv4 6 days 23 hours 59 minutes
-   !
-   subnet 100.64.10.0/24
-      !
-      range 100.64.10.2 100.64.10.2
-      name 10 NET
-      default-gateway 100.64.10.1
-   !
-   subnet 100.64.11.0/24
-      !
-      range 100.64.11.2 100.64.11.2
-      name 11 NET
-      default-gateway 100.64.11.1
-   !
-   subnet 100.64.30.0/24
-      !
-      range 100.64.30.2 100.64.30.2
-      name 30 NET
-      default-gateway 100.64.30.1
-```
-
-### DHCP Server Interfaces
-
-| Interface name | DHCP IPv4 | DHCP IPv6 |
-| -------------- | --------- | --------- |
-| Ethernet5 | True | - |
-| Ethernet6 | True | - |
-| Port-Channel8 | True | - |
-
 ## Monitoring
 
 ### TerminAttr Daemon
@@ -254,6 +203,41 @@ dhcp server
 !
 daemon TerminAttr
    exec /usr/bin/TerminAttr -cvaddr=www.cv-staging.corp.arista.io:443 -cvauth=token-secure,/tmp/cv-onboarding-token -cvvrf=MGMT -smashexcludes=ale,flexCounter,hardware,kni,pulse,strata -ingestexclude=/Sysdb/cell/1/agent,/Sysdb/cell/2/agent -taillogs
+   no shutdown
+```
+
+### Flow Tracking
+
+#### Flow Tracking Sampled
+
+| Sample Size | Minimum Sample Size | Hardware Offload for IPv4 | Hardware Offload for IPv6 | Encapsulations |
+| ----------- | ------------------- | ------------------------- | ------------------------- | -------------- |
+| 10000 | default | disabled | disabled | - |
+
+##### Trackers Summary
+
+| Tracker Name | Record Export On Inactive Timeout | Record Export On Interval | MPLS | Number of Exporters | Applied On | Table Size |
+| ------------ | --------------------------------- | ------------------------- | ---- | ------------------- | ---------- | ---------- |
+| FLOW-TRACKER | 70000 | 5000 | - | 1 | Ethernet1<br>Ethernet2 | - |
+
+##### Exporters Summary
+
+| Tracker Name | Exporter Name | Collector IP/Host | Collector Port | Local Interface |
+| ------------ | ------------- | ----------------- | -------------- | --------------- |
+| FLOW-TRACKER | CV-TELEMETRY | - | - | Loopback0 |
+
+#### Flow Tracking Device Configuration
+
+```eos
+!
+flow tracking sampled
+   sample 10000
+   tracker FLOW-TRACKER
+      record export on inactive timeout 70000
+      record export on interval 5000
+      exporter CV-TELEMETRY
+         collector 127.0.0.1
+         local interface Loopback0
    no shutdown
 ```
 
@@ -302,100 +286,28 @@ vlan internal order ascending range 1006 1199
 
 | Interface | Description | Channel Group | IP Address | VRF |  MTU | Shutdown | ACL In | ACL Out |
 | --------- | ----------- | ------------- | ---------- | ----| ---- | -------- | ------ | ------- |
-| Ethernet1 | pf1-Ethernet2 | - | 100.64.100.1/24 | default | - | False | - | - |
-| Ethernet2 | pf2-Ethernet2 | - | 100.64.200.1/24 | default | - | False | - | - |
-| Ethernet5 | site1-wan1-Ethernet4 | - | 100.64.10.1/24 | default | - | False | - | - |
-| Ethernet6 | site1-wan2-Ethernet4 | - | 100.64.11.1/24 | default | - | False | - | - |
-| Ethernet7 | site2-wan2-Ethernet4 | - | 100.64.21.1/24 | default | - | False | - | - |
-| Ethernet8 | - | 8 | *100.64.30.1/24 | **default | **- | *False | **- | **- |
-| Ethernet9 | - | 8 | *100.64.30.1/24 | **default | **- | *False | **- | **- |
-| Ethernet11 | site4-wan1-Ethernet4 | - | 100.64.40.1/24 | default | - | False | - | - |
-| Ethernet12 | site4-wan2-Ethernet4 | - | 100.64.41.1/24 | default | - | False | - | - |
-
-*Inherited from Port-Channel Interface
+| Ethernet1 | P2P_site1-border1_Ethernet1 | - | 10.0.5.8/31 | default | 9214 | False | - | - |
+| Ethernet2 | P2P_site1-border2_Ethernet1 | - | 10.0.5.10/31 | default | 9214 | False | - | - |
 
 #### Ethernet Interfaces Device Configuration
 
 ```eos
 !
 interface Ethernet1
-   description pf1-Ethernet2
+   description P2P_site1-border1_Ethernet1
    no shutdown
+   mtu 9214
    no switchport
-   ip address 100.64.100.1/24
+   flow tracker sampled FLOW-TRACKER
+   ip address 10.0.5.8/31
 !
 interface Ethernet2
-   description pf2-Ethernet2
+   description P2P_site1-border2_Ethernet1
    no shutdown
+   mtu 9214
    no switchport
-   ip address 100.64.200.1/24
-!
-interface Ethernet5
-   description site1-wan1-Ethernet4
-   no shutdown
-   no switchport
-   ip address 100.64.10.1/24
-   dhcp server ipv4
-!
-interface Ethernet6
-   description site1-wan2-Ethernet4
-   no shutdown
-   no switchport
-   ip address 100.64.11.1/24
-   dhcp server ipv4
-!
-interface Ethernet7
-   description site2-wan2-Ethernet4
-   no shutdown
-   no switchport
-   ip address 100.64.21.1/24
-!
-interface Ethernet8
-   no shutdown
-   channel-group 8 mode active
-!
-interface Ethernet9
-   no shutdown
-   channel-group 8 mode active
-!
-interface Ethernet11
-   description site4-wan1-Ethernet4
-   no shutdown
-   no switchport
-   ip address 100.64.40.1/24
-!
-interface Ethernet12
-   description site4-wan2-Ethernet4
-   no shutdown
-   no switchport
-   ip address 100.64.41.1/24
-```
-
-### Port-Channel Interfaces
-
-#### Port-Channel Interfaces Summary
-
-##### L2
-
-| Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | LACP Fallback Timeout | LACP Fallback Mode | MLAG ID | EVPN ESI |
-| --------- | ----------- | ---- | ----- | ----------- | ------------| --------------------- | ------------------ | ------- | -------- |
-
-##### IPv4
-
-| Interface | Description | MLAG ID | IP Address | VRF | MTU | Shutdown | ACL In | ACL Out |
-| --------- | ----------- | ------- | ---------- | --- | --- | -------- | ------ | ------- |
-| Port-Channel8 | site3-wan1-Port-Channel4 | - | 100.64.30.1/24 | default | - | False | - | - |
-
-#### Port-Channel Interfaces Device Configuration
-
-```eos
-!
-interface Port-Channel8
-   description site3-wan1-Port-Channel4
-   no shutdown
-   no switchport
-   ip address 100.64.30.1/24
-   dhcp server ipv4
+   flow tracker sampled FLOW-TRACKER
+   ip address 10.0.5.10/31
 ```
 
 ### Loopback Interfaces
@@ -406,7 +318,7 @@ interface Port-Channel8
 
 | Interface | Description | VRF | IP Address |
 | --------- | ----------- | --- | ---------- |
-| Loopback0 | ROUTER_ID | default | 172.31.255.23/32 |
+| Loopback0 | ROUTER_ID | default | 192.168.255.18/32 |
 
 ##### IPv6
 
@@ -421,7 +333,7 @@ interface Port-Channel8
 interface Loopback0
    description ROUTER_ID
    no shutdown
-   ip address 172.31.255.23/32
+   ip address 192.168.255.18/32
 ```
 
 ## Routing
@@ -484,7 +396,7 @@ ASN Notation: asplain
 
 | BGP AS | Router ID |
 | ------ | --------- |
-| 65666 | 172.31.255.23 |
+| 65110 | 192.168.255.18 |
 
 | BGP Tuning |
 | ---------- |
@@ -492,6 +404,18 @@ ASN Notation: asplain
 | maximum-paths 4 ecmp 4 |
 
 #### Router BGP Peer Groups
+
+##### EVPN-OVERLAY-PEERS
+
+| Settings | Value |
+| -------- | ----- |
+| Address Family | evpn |
+| Next-hop unchanged | True |
+| Source | Loopback0 |
+| BFD | True |
+| Ebgp multihop | 3 |
+| Send community | all |
+| Maximum routes | 0 (no limit) |
 
 ##### IPv4-UNDERLAY-PEERS
 
@@ -505,26 +429,121 @@ ASN Notation: asplain
 
 | Neighbor | Remote AS | VRF | Shutdown | Send-community | Maximum-routes | Allowas-in | BFD | RIB Pre-Policy Retain | Route-Reflector Client | Passive | TTL Max Hops |
 | -------- | --------- | --- | -------- | -------------- | -------------- | ---------- | --- | --------------------- | ---------------------- | ------- | ------------ |
-| 100.64.21.2 | 65000 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - | - |
+| 10.0.5.9 | 65101 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - | - |
+| 10.0.5.11 | 65101 | default | - | Inherited from peer group IPv4-UNDERLAY-PEERS | Inherited from peer group IPv4-UNDERLAY-PEERS | - | - | - | - | - | - |
+| 192.168.255.3 | 65000 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - | - | - | - |
+| 192.168.255.4 | 65000 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - | - | - | - |
+| 192.168.255.5 | 65101 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - | - | - | - |
+| 192.168.255.6 | 65101 | default | - | Inherited from peer group EVPN-OVERLAY-PEERS | Inherited from peer group EVPN-OVERLAY-PEERS | - | Inherited from peer group EVPN-OVERLAY-PEERS | - | - | - | - |
+
+#### Router BGP EVPN Address Family
+
+##### EVPN Peer Groups
+
+| Peer Group | Activate | Route-map In | Route-map Out | Encapsulation | Next-hop-self Source Interface |
+| ---------- | -------- | ------------ | ------------- | ------------- | ------------------------------ |
+| EVPN-OVERLAY-PEERS | True |  - | - | default | - |
 
 #### Router BGP Device Configuration
 
 ```eos
 !
-router bgp 65666
-   router-id 172.31.255.23
+router bgp 65110
+   router-id 192.168.255.18
    no bgp default ipv4-unicast
    maximum-paths 4 ecmp 4
+   neighbor EVPN-OVERLAY-PEERS peer group
+   neighbor EVPN-OVERLAY-PEERS next-hop-unchanged
+   neighbor EVPN-OVERLAY-PEERS update-source Loopback0
+   neighbor EVPN-OVERLAY-PEERS bfd
+   neighbor EVPN-OVERLAY-PEERS ebgp-multihop 3
+   neighbor EVPN-OVERLAY-PEERS send-community
+   neighbor EVPN-OVERLAY-PEERS maximum-routes 0
    neighbor IPv4-UNDERLAY-PEERS peer group
    neighbor IPv4-UNDERLAY-PEERS send-community
    neighbor IPv4-UNDERLAY-PEERS maximum-routes 12000
-   neighbor 100.64.21.2 peer group IPv4-UNDERLAY-PEERS
-   neighbor 100.64.21.2 remote-as 65000
-   neighbor 100.64.21.2 default-originate always
-   redistribute connected
+   neighbor 10.0.5.9 peer group IPv4-UNDERLAY-PEERS
+   neighbor 10.0.5.9 remote-as 65101
+   neighbor 10.0.5.9 description site1-border1_Ethernet1
+   neighbor 10.0.5.11 peer group IPv4-UNDERLAY-PEERS
+   neighbor 10.0.5.11 remote-as 65101
+   neighbor 10.0.5.11 description site1-border2_Ethernet1
+   neighbor 192.168.255.3 peer group EVPN-OVERLAY-PEERS
+   neighbor 192.168.255.3 remote-as 65000
+   neighbor 192.168.255.3 description site1-wan1_Loopback0
+   neighbor 192.168.255.4 peer group EVPN-OVERLAY-PEERS
+   neighbor 192.168.255.4 remote-as 65000
+   neighbor 192.168.255.4 description site1-wan2_Loopback0
+   neighbor 192.168.255.5 peer group EVPN-OVERLAY-PEERS
+   neighbor 192.168.255.5 remote-as 65101
+   neighbor 192.168.255.5 description site1-border1_Loopback0
+   neighbor 192.168.255.6 peer group EVPN-OVERLAY-PEERS
+   neighbor 192.168.255.6 remote-as 65101
+   neighbor 192.168.255.6 description site1-border2_Loopback0
+   redistribute connected route-map RM-CONN-2-BGP
+   !
+   address-family evpn
+      neighbor EVPN-OVERLAY-PEERS activate
    !
    address-family ipv4
+      no neighbor EVPN-OVERLAY-PEERS activate
       neighbor IPv4-UNDERLAY-PEERS activate
+```
+
+## BFD
+
+### Router BFD
+
+#### Router BFD Multihop Summary
+
+| Interval | Minimum RX | Multiplier |
+| -------- | ---------- | ---------- |
+| 300 | 300 | 3 |
+
+#### Router BFD Device Configuration
+
+```eos
+!
+router bfd
+   multihop interval 300 min-rx 300 multiplier 3
+```
+
+## Filters
+
+### Prefix-lists
+
+#### Prefix-lists Summary
+
+##### PL-LOOPBACKS-EVPN-OVERLAY
+
+| Sequence | Action |
+| -------- | ------ |
+| 10 | permit 192.168.255.0/24 eq 32 |
+
+#### Prefix-lists Device Configuration
+
+```eos
+!
+ip prefix-list PL-LOOPBACKS-EVPN-OVERLAY
+   seq 10 permit 192.168.255.0/24 eq 32
+```
+
+### Route-maps
+
+#### Route-maps Summary
+
+##### RM-CONN-2-BGP
+
+| Sequence | Type | Match | Set | Sub-Route-Map | Continue |
+| -------- | ---- | ----- | --- | ------------- | -------- |
+| 10 | permit | ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY | - | - | - |
+
+#### Route-maps Device Configuration
+
+```eos
+!
+route-map RM-CONN-2-BGP permit 10
+   match ip address prefix-list PL-LOOPBACKS-EVPN-OVERLAY
 ```
 
 ## VRF Instances
